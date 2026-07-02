@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>세포분열 시 염색체 분리 시뮬레이션</title>
+<style>
+  :root{
+    --bg:#f6fbff;
+    --panel:#ffffff;
+    --line:#1f3b5b;
+    --soft:#d9ebff;
+    --accent:#2b7cff;
+    --accent2:#ff6b6b;
+    --accent3:#27ae60;
+    --text:#102133;
+    --muted:#5b6b7a;
+    --grid:#c9d9eb;
+    --shadow:0 0.5rem 1.2rem rgba(16,33,51,0.08);
+    --radius:1rem;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: "Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+    background:linear-gradient(180deg,#eef7ff 0%, #f9fcff 100%);
+    color:var(--text);
+  }
+  .wrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding:1rem;
+  }
+  h1{
+    margin:0 0 0.5rem 0;
+    font-size:clamp(1.6rem,3vw,2.5rem);
+    line-height:1.25;
+  }
+  .subtitle{
+    font-size:clamp(1rem,2vw,1.25rem);
+    color:var(--muted);
+    margin-bottom:1rem;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns: 1.2fr 0.9fr;
+    gap:1rem;
+  }
+  .panel{
+    background:var(--panel);
+    border:2px solid #dceaf7;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:1rem;
+  }
+  .panel h2{
+    font-size:clamp(1.15rem,2.2vw,1.5rem);
+    margin:0 0 0.75rem 0;
+  }
+  .controls{
+    display:grid;
+    gap:1rem;
+  }
+  .control-box{
+    background:#f8fbff;
+    border:1.5px solid #dceaf7;
+    border-radius:0.9rem;
+    padding:0.9rem;
+  }
+  .label-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:0.6rem;
+    margin-bottom:0.6rem;
+    flex-wrap:wrap;
+  }
+  .label{
+    font-size:clamp(1rem,2vw,1.2rem);
+    font-weight:700;
+  }
+  .value{
+    font-size:clamp(1rem,2.2vw,1.2rem);
+    font-weight:800;
+    color:var(--accent);
+    background:#eaf3ff;
+    border-radius:999px;
+    padding:0.25rem 0.7rem;
+  }
+  input[type="range"]{
+    width:100%;
+    accent-color:var(--accent);
+    height:2rem;
+  }
+  .stage-buttons{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:0.45rem;
+  }
+  .stage-btn, .reset-btn{
+    border:none;
+    border-radius:0.9rem;
+    padding:0.8rem 0.6rem;
+    font-size:clamp(0.95rem,1.8vw,1.05rem);
+    font-weight:800;
+    cursor:pointer;
+    transition:transform 0.12s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .stage-btn{
+    background:#eaf3ff;
+    color:#19406d;
+  }
+  .stage-btn.active{
+    background:var(--accent);
+    color:#fff;
+    box-shadow:0 0.35rem 1rem rgba(43,124,255,0.28);
+  }
+  .stage-btn:hover, .reset-btn:hover{ transform:translateY(-1px); }
+  .reset-btn{
+    width:100%;
+    background:#fff3e8;
+    color:#9a4b00;
+    border:2px solid #ffd3a6;
+    margin-top:0.2rem;
+  }
+  .canvas-wrap{
+    background:#fcfeff;
+    border:1.5px solid #dceaf7;
+    border-radius:1rem;
+    padding:0.6rem;
+  }
+  #simCanvas, #graphCanvas{
+    width:100%;
+    display:block;
+    border-radius:0.7rem;
+    background:#ffffff;
+  }
+  #simCanvas{
+    aspect-ratio: 16 / 10;
+    border:1px solid #dceaf7;
+  }
+  #graphCanvas{
+    aspect-ratio: 16 / 9;
+    border:1px solid #dceaf7;
+  }
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0.8rem 1rem;
+    margin-top:0.7rem;
+    font-size:clamp(0.95rem,1.8vw,1.05rem);
+  }
+  .key{
+    display:inline-flex;
+    align-items:center;
+    gap:0.45rem;
+  }
+  .swatch{
+    width:1rem;
+    height:1rem;
+    border-radius:0.3rem;
+    border:1px solid rgba(0,0,0,0.15);
+  }
+  .info{
+    display:grid;
+    gap:0.8rem;
+  }
+  .note{
+    background:#f8fbff;
+    border-left:0.4rem solid var(--accent);
+    padding:0.9rem;
+    border-radius:0.8rem;
+    font-size:clamp(1rem,2vw,1.13rem);
+    line-height:1.55;
+  }
+  .concept{
+    background:#f3fff6;
+    border-left:0.4rem solid var(--accent3);
+    padding:0.9rem;
+    border-radius:0.8rem;
+    font-size:clamp(1rem,2vw,1.13rem);
+    line-height:1.55;
+  }
+  .small{
+    color:var(--muted);
+    font-size:clamp(0.92rem,1.8vw,1rem);
+    line-height:1.5;
+  }
+  .footer-box{
+    margin-top:1rem;
+    background:#fffef7;
+    border:1.5px solid #f2e6a7;
+    border-radius:1rem;
+    padding:0.9rem 1rem;
+    font-size:clamp(0.98rem,1.9vw,1.08rem);
+    line-height:1.6;
+  }
+  @media (max-width: 900px){
+    .grid{ grid-template-columns:1fr; }
+    .stage-buttons{ grid-template-columns:repeat(2,1fr); }
+    .stage-btn:last-child{ grid-column:1 / -1; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>세포분열 시 염색체의 분리 시뮬레이션</h1>
+    <div class="subtitle">염색체 수와 분열 단계를 바꾸며, 염색체가 어떻게 이동하고 분열이 끝난 뒤 결과가 어떻게 되는지 관찰해 보세요.</div>
+
+    <div class="grid">
+      <section class="panel">
+        <h2>세포분열 장면</h2>
+        <div class="canvas-wrap">
+          <canvas id="simCanvas" aria-label="세포분열 시뮬레이션 그림"></canvas>
+        </div>
+        <div class="legend">
+          <span class="key"><span class="swatch" style="background:#6ea8fe;"></span>염색체(복제된 상태)</span>
+          <span class="key"><span class="swatch" style="background:#ff7b7b;"></span>분리된 염색분체/염색체</span>
+          <span class="key"><span class="swatch" style="background:#b39ddb;"></span>핵</span>
+          <span class="key"><span class="swatch" style="background:#7f8fa6;"></span>방추사 방향</span>
+        </div>
+      </section>
+
+      <section class="panel controls">
+        <div class="control-box">
+          <div class="label-row">
+            <div class="label">시작 세포의 염색체 수</div>
+            <div class="value"><span id="countValue">4</span>개</div>
+          </div>
+          <input id="countSlider" type="range" min="2" max="12" step="1" value="4" />
+          <div class="small">단위: 개. 체세포분열에서는 분열이 끝난 뒤 각 딸세포의 염색체 수가 시작 세포와 같아집니다.</div>
+        </div>
+
+        <div class="control-box">
+          <div class="label-row">
+            <div class="label">분열 단계</div>
+            <div class="value" id="stageName">전기</div>
+          </div>
+          <div class="stage-buttons" id="stageButtons"></div>
+          <input id="stageSlider" type="range" min="0" max="4" step="1" value="0" />
+          <div class="small">버튼 또는 슬라이더로 단계를 바꾸면 그림과 그래프가 바로 바뀝니다.</div>
+        </div>
+
+        <button class="reset-btn" id="resetBtn">다시 시작</button>
+
+        <div class="info">
+          <div class="note" id="observationBox"></div>
+          <div class="concept" id="conceptBox"></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel" style="margin-top:1rem;">
+      <h2>그래프로 확인하기</h2>
+      <div class="canvas-wrap">
+        <canvas id="graphCanvas" aria-label="염색체 수와 세포 수 그래프"></canvas>
+      </div>
+      <div class="small" style="margin-top:0.7rem;">
+        세로축 단위: 개. 파란 막대는 현재 한 세포 안에서 보이는 염색체 수, 주황 막대는 현재 세포 수, 초록 막대는 분열 완료 후 딸세포 1개당 염색체 수를 나타냅니다.
+        후기에는 자매염색분체가 분리되어 각각 독립된 염색체로 보이므로, 한 세포 안에서 보이는 염색체 수가 일시적으로 증가합니다.
+      </div>
+    </section>
+
+    <div class="footer-box">
+      확인할 개념: 체세포분열에서는 염색체가 양쪽으로 정확히 분리되어 이동하고, 분열이 완료되면 <strong>딸세포 2개</strong>가 만들어지며 <strong>각 딸세포의 염색체 수는 시작 세포와 같습니다.</strong>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const stages = ["전기", "중기", "후기", "말기·세포질분열", "분열 완료"];
+  const countSlider = document.getElementById("countSlider");
+  const stageSlider = document.getElementById("stageSlider");
+  const countValue = document.getElementById("countValue");
+  const stageName = document.getElementById("stageName");
+  const observationBox = document.getElementById("observationBox");
+  const conceptBox = document.getElementById("conceptBox");
+  const resetBtn = document.getElementById("resetBtn");
+  const stageButtonsWrap = document.getElementById("stageButtons");
+
+  const simCanvas = document.getElementById("simCanvas");
+  const simCtx = simCanvas.getContext("2d");
+  const graphCanvas = document.getElementById("graphCanvas");
+  const graphCtx = graphCanvas.getContext("2d");
+
+  let chromosomeCount = 4;
+  let stage = 0;
+
+  stages.forEach((name, i) => {
+    const btn = document.createElement("button");
+    btn.className = "stage-btn";
+    btn.textContent = name;
+    btn.addEventListener("click", () => {
+      stage = i;
+      stageSlider.value = stage;
+      update();
+    });
+    stageButtonsWrap.appendChild(btn);
+  });
+
+  function resizeCanvas(canvas, ctx){
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function layoutCanvases(){
+    resizeCanvas(simCanvas, simCtx);
+    resizeCanvas(graphCanvas, graphCtx);
+    drawAll();
+  }
+
+  window.addEventListener("resize", layoutCanvases);
+
+  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+  function getStageInfo(){
+    const currentChromosomes = stage === 2 ? chromosomeCount * 2 : chromosomeCount;
+    const currentCells = stage === 4 ? 2 : 1;
+    const daughterChromosomes = chromosomeCount;
+    return { currentChromosomes, currentCells, daughterChromosomes };
+  }
+
+  function updateTexts(){
+    countValue.textContent = chromosomeCount;
+    stageName.textContent = stages[stage];
+
+    const buttons = [...stageButtonsWrap.querySelectorAll(".stage-btn")];
+    buttons.forEach((b,i)=>b.classList.toggle("active", i === stage));
+
+    const observations = [
+      "전기: 염색체가 굵고 짧게 응축되어 보이기 시작합니다. 아직 한 세포 안에 있으며, 복제된 염색체가 분리될 준비를 합니다.",
+      "중기: 염색체가 세포의 가운데(적도면)에 나란히 배열됩니다. 분리 직전의 위치를 확인해 보세요.",
+      "후기: 자매염색분체가 서로 분리되어 양쪽 극으로 이동합니다. 염색체의 실제 이동을 가장 분명하게 관찰할 수 있는 단계입니다.",
+      "말기·세포질분열: 양쪽 끝에 모인 염색체 주위로 핵이 다시 만들어지고, 세포질이 나뉘기 시작합니다.",
+      "분열 완료: 딸세포 2개가 형성되었습니다. 각 딸세포는 시작 세포와 같은 수의 염색체를 가집니다."
+    ];
+    const concepts = [
+      "핵심 개념: 체세포분열은 염색체를 정확히 복제하고 고르게 나누어, 다음 세포가 같은 유전 정보를 갖도록 합니다.",
+      "핵심 개념: 염색체가 가운데에 정확히 배열되어야 양쪽으로 같은 수가 이동할 수 있습니다.",
+      "핵심 개념: 후기에는 자매염색분체가 분리되어 각각 독립된 염색체로 이동합니다. 이 단계가 분배의 핵심입니다.",
+      "핵심 개념: 세포가 실제로 둘로 나뉘어 가면서, 양쪽 핵에 같은 수의 염색체가 들어갑니다.",
+      "핵심 개념: 분열이 완료되면 딸세포는 2개가 되고, 각 딸세포의 염색체 수는 시작 세포와 같습니다."
+    ];
+    observationBox.textContent = observations[stage];
+    conceptBox.textContent = concepts[stage];
+  }
+
+  function drawAll(){
+    drawSimulation();
+    drawGraph();
+  }
+
+  function update(){
+    chromosomeCount = parseInt(countSlider.value,10);
+    stage = parseInt(stageSlider.value,10);
+    updateTexts();
+    drawAll();
+  }
+
+  function drawBackgroundGrid(ctx, w, h){
+    ctx.save();
+    ctx.strokeStyle = "#edf4fb";
+    ctx.lineWidth = 1;
+    for(let x=0;x<=w;x+=w/12){
+      ctx.beginPath();
+      ctx.moveTo(x,0);
+      ctx.lineTo(x,h);
+      ctx.stroke();
+    }
+    for(let y=0;y<=h;y+=h/8){
+      ctx.beginPath();
+      ctx.moveTo(0,y);
+      ctx.lineTo(w,y);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function draw
