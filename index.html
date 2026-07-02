@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>영재 탐구 산출물 아카이브</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --sub:#4b5563;
+      --line:#dbe3ee;
+      --accent:#2563eb;
+      --accent-strong:#1d4ed8;
+      --soft:#eef4ff;
+      --shadow:0 10px 30px rgba(31, 41, 55, 0.08);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family: Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background:linear-gradient(180deg, #f8fbff 0%, #f4f7fb 100%);
+      color:var(--text);
+      line-height:1.7;
+    }
+
+    .wrap{
+      width:min(1100px, 92vw);
+      margin:0 auto;
+      padding:48px 0 72px;
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #eaf2ff 0%, #ffffff 100%);
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:40px 28px;
+      box-shadow:var(--shadow);
+      margin-bottom:32px;
+    }
+
+    .hero h1{
+      margin:0 0 14px;
+      font-size:clamp(2rem, 5vw, 3.5rem);
+      line-height:1.2;
+      letter-spacing:-0.03em;
+    }
+
+    .hero p{
+      margin:0;
+      font-size:clamp(1.05rem, 2.3vw, 1.35rem);
+      color:var(--sub);
+    }
+
+    .section-title{
+      font-size:clamp(1.4rem, 3vw, 2rem);
+      margin:18px 4px 18px;
+      letter-spacing:-0.02em;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));
+      gap:22px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:24px;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      min-height:100%;
+    }
+
+    .card h2{
+      margin:0 0 14px;
+      font-size:clamp(1.5rem, 3.6vw, 2.2rem);
+      line-height:1.25;
+      letter-spacing:-0.02em;
+    }
+
+    .tag{
+      display:inline-block;
+      align-self:flex-start;
+      margin-bottom:14px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:var(--soft);
+      color:var(--accent-strong);
+      font-size:1rem;
+      font-weight:700;
+    }
+
+    .info{
+      display:grid;
+      gap:12px;
+      margin-bottom:22px;
+    }
+
+    .row{
+      background:#fbfcfe;
+      border:1px solid #e8eef7;
+      border-radius:16px;
+      padding:14px 16px;
+    }
+
+    .label{
+      display:block;
+      font-size:1rem;
+      font-weight:800;
+      color:var(--accent-strong);
+      margin-bottom:4px;
+    }
+
+    .text{
+      font-size:1.08rem;
+      color:var(--text);
+    }
+
+    .btn{
+      margin-top:auto;
+      display:inline-block;
+      text-align:center;
+      text-decoration:none;
+      background:var(--accent);
+      color:#fff;
+      font-weight:800;
+      font-size:1.08rem;
+      padding:15px 18px;
+      border-radius:16px;
+      transition:transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+      box-shadow:0 10px 20px rgba(37, 99, 235, 0.22);
+    }
+
+    .btn:hover,
+    .btn:focus{
+      background:var(--accent-strong);
+      transform:translateY(-2px);
+      outline:none;
+    }
+
+    .footer{
+      margin-top:28px;
+      padding:18px 8px 0;
+      color:var(--sub);
+      font-size:1rem;
+      text-align:center;
+    }
+
+    @media (max-width:640px){
+      .wrap{padding:26px 0 48px;}
+      .hero{padding:28px 20px;}
+      .card{padding:20px;}
+      .text{font-size:1rem;}
+      .btn{width:100%;}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>영재 탐구 산출물 아카이브</h1>
+      <p>탐구의 시작이 된 질문, 고민하며 남긴 사고의 흔적, 그리고 아직 닫히지 않은 결론을 한눈에 살펴볼 수 있는 대문 페이지입니다.</p>
+    </section>
+
+    <h2 class="section-title">탐구 산출물 목록</h2>
+
+    <section class="grid">
+      <article class="card">
+        <div class="tag">생명과학 탐구</div>
+        <h2>세포분열</h2>
+
+        <div class="info">
+          <div class="row">
+            <span class="label">탐구 질문</span>
+            <div class="text">세포는 왜 한 번에 무작위로 나뉘지 않고, 정해진 단계와 질서를 거치며 분열할까?</div>
+          </div>
+
+          <div class="row">
+            <span class="label">사고 흔적</span>
+            <div class="text">핵의 변화, 염색체의 배열, 세포질 분리가 이어지는 과정을 단계별로 정리하며 각 과정이 어떤 역할을 하는지 연결해서 생각해 보았다.</div>
+          </div>
+
+          <div class="row">
+            <span class="label">열린 결론</span>
+            <div class="text">세포분열은 단순히 수를 늘리는 과정이 아니라 생명체가 정보를 비교적 안정적으로 이어 가기 위한 정교한 조절 과정일 수 있으며, 예외적 상황도 더 탐구해 볼 필요가 있다.</div>
+          </div>
+        </div>
+
+        <a href="celldevision.html" target="_blank" rel="noopener" class="btn">산출물 열기</a>
+      </article>
+    </section>
+
+    <div class="footer">각 카드는 교사가 쉽게 수정할 수 있도록 자연스러운 예시 문장으로 구성되어 있습니다.</div>
+  </main>
+</body>
+</html>
